@@ -18,7 +18,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-emerald-950 to-black text-white p-6">
 
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-10">
 
         <div>
 
@@ -26,22 +26,23 @@ export default function DashboardPage() {
             Borrower Dashboard
           </h1>
 
-          <p className="text-emerald-400 mt-1">
+          <p className="text-emerald-400 mt-2">
             Welcome to A&L Alalay
           </p>
 
         </div>
 
+        {/* Logout Button */}
         <button
           onClick={handleLogout}
-          className="bg-red-600 hover:bg-red-700 px-5 py-3 rounded-xl font-semibold"
+          className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-2xl font-bold shadow-lg"
         >
           Logout
         </button>
 
       </div>
 
-      {/* Loan Overview */}
+      {/* Loan Cards */}
       <div className="grid gap-5 md:grid-cols-3">
 
         <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/10">
@@ -85,9 +86,7 @@ export default function DashboardPage() {
       {/* Actions */}
       <div className="mt-10 grid gap-5 md:grid-cols-2">
 
-        <button
-          className="bg-emerald-700 hover:bg-emerald-800 rounded-3xl p-8 text-left transition-all"
-        >
+        <button className="bg-emerald-700 hover:bg-emerald-800 rounded-3xl p-8 text-left transition-all">
 
           <h2 className="text-2xl font-bold">
             Apply for Loan
@@ -99,9 +98,7 @@ export default function DashboardPage() {
 
         </button>
 
-        <button
-          className="bg-white/10 hover:bg-white/20 rounded-3xl p-8 text-left transition-all border border-white/10"
-        >
+        <button className="bg-white/10 hover:bg-white/20 rounded-3xl p-8 text-left transition-all border border-white/10">
 
           <h2 className="text-2xl font-bold">
             My Profile
