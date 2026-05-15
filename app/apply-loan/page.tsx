@@ -12,6 +12,7 @@ export default function ApplyLoanPage() {
   const [loading, setLoading] = useState(false)
 
   const handleApply = async (e: React.FormEvent) => {
+
     e.preventDefault()
 
     setLoading(true)
@@ -21,24 +22,31 @@ export default function ApplyLoanPage() {
     } = await supabase.auth.getUser()
 
     if (!user) {
+
       toast.error("Please login first")
+
       setLoading(false)
+
       return
     }
 
-    const { error } = await supabase.from("loans").insert({
+    const { error } = await supabase
+      .from("loans")
+      .insert({
 
-      user_id: user.id,
-      amount: Number(amount),
-      term_months: Number(term),
-      purpose,
+        user_id: user.id,
+        amount: Number(amount),
+        term_months: Number(term),
+        purpose,
 
-    })
+      })
 
     setLoading(false)
 
     if (error) {
+
       toast.error(error.message)
+
       return
     }
 
