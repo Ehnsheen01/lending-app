@@ -131,23 +131,27 @@ const handleLogin = async (e: React.FormEvent) => {
             {loading ? "SIGNING IN..." : "LOGIN"}
           </button>
           
-           <div className="flex flex-col items-center gap-2 mt-4 text-sm">
+           <div className="mt-4 text-center">
 
-           <a
-           href="/register"
-          className="text-emerald-700 hover:underline"
-          >
-         Create Account
-          </a>
+  <div>
+    <a
+      href="/register"
+      className="block text-emerald-700 text-sm font-medium"
+    >
+      Create Account
+    </a>
+  </div>
 
-         <a
-         href="/forgot-password"
-         className="text-emerald-700 hover:underline"
-          >
-            Forgot Password?
-         </a>
+  <div className="mt-2">
+    <a
+      href="/forgot-password"
+      className="block text-emerald-700 text-sm font-medium"
+    >
+      Forgot Password?
+    </a>
+  </div>
 
-        </div>
+</div>
 
           {/* Security Footer */}
           <div className="pt-6 text-center border-t border-gray-200">
