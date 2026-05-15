@@ -86,17 +86,20 @@ export default function DashboardPage() {
       {/* Actions */}
       <div className="mt-10 grid gap-5 md:grid-cols-2">
 
-        <button className="bg-emerald-700 hover:bg-emerald-800 rounded-3xl p-8 text-left transition-all">
+        <a
+  href="/apply-loan"
+  className="bg-emerald-700 hover:bg-emerald-800 rounded-3xl p-8 text-left transition-all block"
+>
 
-          <h2 className="text-2xl font-bold">
-            Apply for Loan
-          </h2>
+  <h2 className="text-2xl font-bold">
+    Apply for Loan
+  </h2>
 
-          <p className="mt-2 text-emerald-200">
-            Submit a new loan application
-          </p>
+  <p className="mt-2 text-emerald-200">
+    Submit a new loan application
+  </p>
 
-        </button>
+</a>
 
         <button className="bg-white/10 hover:bg-white/20 rounded-3xl p-8 text-left transition-all border border-white/10">
 
