@@ -96,6 +96,7 @@ export default function DashboardPage() {
           {/* Loan Cards */}
           <div className="grid gap-5 md:grid-cols-3">
 
+            {/* Status Card */}
             <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/10">
 
               <p className="text-gray-300">
@@ -130,6 +131,9 @@ export default function DashboardPage() {
 
               )}
 
+            </div>
+
+            {/* Loan Amount */}
             <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/10">
 
               <p className="text-gray-300">
@@ -142,6 +146,7 @@ export default function DashboardPage() {
 
             </div>
 
+            {/* Weekly Amortization */}
             <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/10">
 
               <p className="text-gray-300">
