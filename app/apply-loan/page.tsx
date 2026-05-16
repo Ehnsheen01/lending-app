@@ -90,6 +90,10 @@ export default function ApplyLoanPage() {
         term_months: 1,
         full_name: user.user_metadata?.full_name || "Borrower",
         email: user.email,
+        next_due_date:
+        new Date(
+          Date.now() + 7 * 24 * 60 * 60 * 1000
+          ),
       })
 
     setLoading(false)

@@ -199,6 +199,26 @@ export default function AdminPage() {
             const remainingBalance =
             totalCollectible - totalPaid
 
+            const today = new Date()
+
+            const dueDate =
+            loan.next_due_date
+                ? new Date(loan.next_due_date)
+                : null
+
+            const isOverdue =
+            dueDate &&
+            today > dueDate &&
+            remainingBalance > 0
+
+            const penalty =
+            isOverdue
+                ? remainingBalance * 0.01
+                : 0
+
+            const finalBalance =
+            remainingBalance + penalty
+
             const weeklyAmortization =
               totalCollectible / 4
 
@@ -286,7 +306,19 @@ export default function AdminPage() {
                     </p>
 
                     <h2 className="text-2xl font-bold text-yellow-400 mt-2">
-                        ₱{remainingBalance.toFixed(2)}
+                        ₱{finalBalance.toFixed(2)}
+                    </h2>
+
+                    </div>
+
+                    <div className="mt-4">
+
+                    <p className="text-gray-400">
+                        Penalty
+                    </p>
+
+                    <h2 className="text-2xl font-bold text-red-400 mt-2">
+                        ₱{penalty.toFixed(2)}
                     </h2>
 
                     </div>
@@ -433,6 +465,78 @@ export default function AdminPage() {
                     </div>
 
                   </div>
+
+                )}
+
+                {/* Payment History */}
+                {loanPayments.length > 0 && (
+
+                <div className="mt-8 border-t border-white/10 pt-6">
+
+                    <h2 className="text-2xl font-bold mb-4">
+                    Payment History
+                    </h2>
+
+                    <div className="space-y-3">
+
+                    {loanPayments.map((payment) => (
+
+                        <div
+                        key={payment.id}
+                        className="bg-white/5 rounded-2xl p-4"
+                        >
+
+                        <div className="flex justify-between flex-wrap gap-4">
+
+                            <div>
+
+                            <p className="text-gray-400 text-sm">
+                                Payment Date
+                            </p>
+
+                            <p>
+                                {new Date(
+                                payment.payment_date
+                                ).toLocaleString()}
+                            </p>
+
+                            </div>
+
+                            <div>
+
+                            <p className="text-gray-400 text-sm">
+                                Amortization
+                            </p>
+
+                            <p className="text-emerald-300">
+                                ₱{Number(payment.amount).toFixed(2)}
+                            </p>
+
+                            </div>
+
+                            <div>
+
+                            <p className="text-gray-400 text-sm">
+                                LRF
+                            </p>
+
+                            <p className="text-cyan-300">
+                                ₱{Number(
+                                payment.retention_fund || 0
+                                ).toFixed(2)}
+                            </p>
+
+                            </div>
+
+                        </div>
+
+                        </div>
+
+                    ))}
+
+                    </div>
+
+                </div>
 
                 )}
 
