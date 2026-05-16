@@ -62,6 +62,24 @@ export default function ApplyLoanPage() {
       return
     }
 
+    const { data: existingLoan } = await supabase
+      .from("loans")
+      .select("*")
+      .eq("user_id", user.id)
+      .in("status", ["Pending", "Approved"])
+      .maybeSingle()
+
+    if (existingLoan) {
+
+      toast.error(
+        "You already have an active loan application."
+      )
+
+      setLoading(false)
+
+      return
+    }
+
     const { error } = await supabase
       .from("loans")
       .insert({
