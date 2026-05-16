@@ -20,38 +20,42 @@ export default function AdminPage() {
       .select("*")
       .order("created_at", { ascending: false })
 
-    if (!error && data) {
-      setLoans(data)
+    if (error) {
+      toast.error(error.message)
+      setLoading(false)
+      return
     }
 
+    setLoans(data || [])
     setLoading(false)
   }
 
   const updateStatus = async (
-  id: string,
-  status: string
-    ) => {
+    id: string,
+    status: string
+  ) => {
 
     const { error } = await supabase
-        .from("loans")
-        .update({ status })
-        .eq("id", id)
+      .from("loans")
+      .update({ status })
+      .eq("id", id)
 
     if (error) {
-        toast.error(error.message)
-        return
+      toast.error(error.message)
+      return
     }
 
-    setLoans((prev) =>
-        prev.map((loan) =>
+    // Instant UI update
+    setLoans((prevLoans) =>
+      prevLoans.map((loan) =>
         loan.id === id
-            ? { ...loan, status }
-            : loan
-        )
+          ? { ...loan, status }
+          : loan
+      )
     )
 
     toast.success(`Loan ${status}`)
-    }
+  }
 
   const handleLogout = async () => {
 
@@ -80,7 +84,6 @@ export default function AdminPage() {
 
         </div>
 
-        {/* Logout Button */}
         <button
           onClick={handleLogout}
           className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-2xl font-bold shadow-lg"
@@ -102,10 +105,10 @@ export default function AdminPage() {
 
           {loans.map((loan) => {
 
-            const interest = loan.amount * 0.12
+            const interest = Number(loan.amount) * 0.12
 
             const totalCollectible =
-              loan.amount + interest
+              Number(loan.amount) + interest
 
             const weeklyAmortization =
               totalCollectible / 4
@@ -117,6 +120,7 @@ export default function AdminPage() {
                 className="bg-white/10 rounded-3xl p-6 border border-white/10"
               >
 
+                {/* Loan Info */}
                 <div className="grid gap-4 md:grid-cols-2">
 
                   <div>
@@ -137,7 +141,19 @@ export default function AdminPage() {
                       Status
                     </p>
 
-                    <h2 className="text-2xl font-bold mt-1">
+                    <h2
+                      className={`text-2xl font-bold mt-1 ${
+                        String(loan.status)
+                          .trim()
+                          .toLowerCase() === "approved"
+                          ? "text-emerald-400"
+                          : String(loan.status)
+                              .trim()
+                              .toLowerCase() === "rejected"
+                          ? "text-red-400"
+                          : "text-yellow-400"
+                      }`}
+                    >
                       {loan.status}
                     </h2>
 
@@ -155,34 +171,6 @@ export default function AdminPage() {
 
                   </div>
 
-                  {/* Buttons */}
-                    {String(loan.status).trim().toLowerCase() !== "approved" &&
-                    String(loan.status).trim().toLowerCase() !== "rejected" ? (
-
-                    <div className="flex gap-4 mt-6">
-
-                        <button>
-                        Approve
-                        </button>
-
-                        <button>
-                        Reject
-                        </button>
-
-                    </div>
-
-                    ) : (
-
-                    <div className="mt-6">
-
-                        <span>
-                        Action Completed
-                        </span>
-
-                    </div>
-
-                    )}
-
                   <div>
 
                     <p className="text-gray-400">
@@ -198,13 +186,56 @@ export default function AdminPage() {
                 </div>
 
                 {/* Buttons */}
-              
+                {String(loan.status)
+                  .trim()
+                  .toLowerCase() === "pending" ? (
+
+                  <div className="flex gap-4 mt-6">
+
+                    <button
+                      onClick={() =>
+                        updateStatus(
+                          loan.id,
+                          "Approved"
+                        )
+                      }
+                      className="bg-emerald-600 hover:bg-emerald-700 px-5 py-3 rounded-xl font-bold"
+                    >
+                      Approve
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        updateStatus(
+                          loan.id,
+                          "Rejected"
+                        )
+                      }
+                      className="bg-red-600 hover:bg-red-700 px-5 py-3 rounded-xl font-bold"
+                    >
+                      Reject
+                    </button>
+
+                  </div>
+
+                ) : (
+
+                  <div className="mt-6">
+
+                    <span className="bg-gray-700 text-white px-4 py-2 rounded-xl">
+                      Action Completed
+                    </span>
+
+                  </div>
+
+                )}
 
               </div>
             )
           })}
 
         </div>
+
       )}
 
     </div>
