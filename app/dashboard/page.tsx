@@ -9,6 +9,9 @@ export default function DashboardPage() {
   const [loan, setLoan] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
+   const [payments, setPayments] =
+  useState<any[]>([])
+
   useEffect(() => {
     fetchLoan()
   }, [])
@@ -33,11 +36,24 @@ export default function DashboardPage() {
       .single()
 
     if (!error && data) {
+
       setLoan(data)
+
+    const { data: paymentData } =
+    await supabase
+      .from("payments")
+      .select("*")
+      .eq("loan_id", data.id)
+      .order("payment_date", {
+        ascending: false
+      })
+    
+    setPayments(paymentData || [])
     }
 
     setLoading(false)
-  }
+
+  } 
 
   const handleLogout = async () => {
 
@@ -55,6 +71,16 @@ export default function DashboardPage() {
     : 0
 
   const weeklyAmortization = totalCollectible / 4
+
+  const totalPaid =
+  payments.reduce(
+    (sum, payment) =>
+      sum + Number(payment.amount),
+    0
+  )
+
+  const remainingBalance =
+  totalCollectible - totalPaid
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-emerald-950 to-black text-white p-6">
@@ -210,6 +236,47 @@ export default function DashboardPage() {
                   <p className="text-xl mt-1">
                     {loan.status}
                   </p>
+                </div>
+
+              </div>
+
+            </div>
+
+          )}
+
+          {/* Payment Summary */}
+          {loan && loan.status === "Approved" && (
+
+            <div className="mt-10 bg-white/10 rounded-3xl p-8 border border-white/10">
+
+              <h2 className="text-3xl font-bold mb-6">
+                Payment Summary
+              </h2>
+
+              <div className="grid md:grid-cols-2 gap-6">
+
+                <div>
+
+                  <p className="text-gray-400">
+                    Total Paid
+                  </p>
+
+                  <h2 className="text-3xl font-bold text-emerald-400 mt-2">
+                    ₱{totalPaid.toFixed(2)}
+                  </h2>
+
+                </div>
+
+                <div>
+
+                  <p className="text-gray-400">
+                    Remaining Balance
+                  </p>
+
+                  <h2 className="text-3xl font-bold text-yellow-400 mt-2">
+                    ₱{remainingBalance.toFixed(2)}
+                  </h2>
+
                 </div>
 
               </div>
