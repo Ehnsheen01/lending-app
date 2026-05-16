@@ -9,6 +9,9 @@ export default function AdminPage() {
   const [loans, setLoans] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
+  const [paymentAmounts, setPaymentAmounts] =
+    useState<any>({})
+
   useEffect(() => {
     fetchLoans()
   }, [])
@@ -55,6 +58,40 @@ export default function AdminPage() {
     )
 
     toast.success(`Loan ${status}`)
+  }
+
+  const recordPayment = async (
+    loanId: string,
+    userId: string
+  ) => {
+
+    const amount =
+      paymentAmounts[loanId]
+
+    if (!amount) {
+      toast.error("Enter payment amount")
+      return
+    }
+
+    const { error } = await supabase
+      .from("payments")
+      .insert({
+        loan_id: loanId,
+        user_id: userId,
+        amount: Number(amount),
+      })
+
+    if (error) {
+      toast.error(error.message)
+      return
+    }
+
+    toast.success("Payment recorded")
+
+    setPaymentAmounts((prev: any) => ({
+      ...prev,
+      [loanId]: ""
+    }))
   }
 
   const handleLogout = async () => {
@@ -104,12 +141,14 @@ export default function AdminPage() {
         <div className="space-y-6">
 
           {loans.map((loan) => {
-           const normalizedStatus =
-            String(loan.status)
+
+            const normalizedStatus =
+              String(loan.status)
                 .trim()
                 .toLowerCase()
 
-            const interest = Number(loan.amount) * 0.12
+            const interest =
+              Number(loan.amount) * 0.12
 
             const totalCollectible =
               Number(loan.amount) + interest
@@ -118,102 +157,147 @@ export default function AdminPage() {
               totalCollectible / 4
 
             return (
-                <div
+
+              <div
                 key={loan.id}
                 className="bg-white/10 rounded-3xl p-6 border border-white/10"
-                >
+              >
 
                 <div className="grid md:grid-cols-2 gap-6">
 
-                    <div>
+                  <div>
 
                     <p className="text-gray-400">
-                        Loan Amount
+                      Loan Amount
                     </p>
 
                     <h2 className="text-3xl font-bold mt-2">
-                        ₱{Number(loan.amount).toFixed(2)}
+                      ₱{Number(loan.amount).toFixed(2)}
                     </h2>
 
                     <div className="mt-6">
 
-                        <p className="text-gray-400">
+                      <p className="text-gray-400">
                         Purpose
-                        </p>
+                      </p>
 
-                        <p className="mt-2">
+                      <p className="mt-2">
                         {loan.purpose}
-                        </p>
+                      </p>
 
                     </div>
 
-                    </div>
+                  </div>
 
-                    <div>
+                  <div>
 
                     <p className="text-gray-400">
-                        Status
+                      Status
                     </p>
 
-                    <h2 className="text-3xl font-bold mt-2">
-                        {loan.status}
+                    <h2 className={`text-3xl font-bold mt-2 ${
+                        normalizedStatus === "approved"
+                        ? "text-emerald-400"
+                        : normalizedStatus === "rejected"
+                        ? "text-red-400"
+                        : "text-yellow-400"
+                    }`}>
+                        
+                    {loan.status}
                     </h2>
-                    
-                    <p className="text-red-400 text-sm mt-2">
-                        {JSON.stringify(loan.status)}
-                    </p>
 
                     <div className="mt-6">
 
-                        <p className="text-gray-400">
+                      <p className="text-gray-400">
                         Weekly Amortization
-                        </p>
+                      </p>
 
-                        <p className="mt-2">
+                      <p className="mt-2">
                         ₱{weeklyAmortization.toFixed(2)}
-                        </p>
+                      </p>
 
                     </div>
 
-                    </div>
+                  </div>
 
                 </div>
 
-                {/* ACTIONS */}
+                {/* Actions */}
                 {normalizedStatus === "pending" && (
 
-                    <div className="flex gap-4 mt-8">
+                  <div className="flex gap-4 mt-8">
 
                     <button
-                        onClick={() =>
+                      onClick={() =>
                         updateStatus(
-                            loan.id,
-                            "Approved"
+                          loan.id,
+                          "Approved"
                         )
-                        }
-                        className="bg-emerald-600 hover:bg-emerald-700 px-5 py-3 rounded-xl font-bold"
+                      }
+                      className="bg-emerald-600 hover:bg-emerald-700 px-5 py-3 rounded-xl font-bold"
                     >
-                        Approve
+                      Approve
                     </button>
 
                     <button
-                        onClick={() =>
+                      onClick={() =>
                         updateStatus(
-                            loan.id,
-                            "Rejected"
+                          loan.id,
+                          "Rejected"
                         )
-                        }
-                        className="bg-red-600 hover:bg-red-700 px-5 py-3 rounded-xl font-bold"
+                      }
+                      className="bg-red-600 hover:bg-red-700 px-5 py-3 rounded-xl font-bold"
                     >
-                        Reject
+                      Reject
                     </button>
 
-                    </div>
+                  </div>
 
                 )}
 
-                </div>
-              
+                {/* Payment Recording */}
+                {normalizedStatus === "approved" && (
+
+                  <div className="mt-8 border-t border-white/10 pt-6">
+
+                    <h2 className="text-xl font-bold mb-4">
+                      Record Payment
+                    </h2>
+
+                    <div className="flex gap-4 flex-wrap">
+
+                      <input
+                        type="number"
+                        placeholder="Payment Amount"
+                        value={paymentAmounts[loan.id] || ""}
+                        onChange={(e) =>
+                          setPaymentAmounts((prev: any) => ({
+                            ...prev,
+                            [loan.id]: e.target.value
+                          }))
+                        }
+                        className="bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-white"
+                      />
+
+                      <button
+                        onClick={() =>
+                          recordPayment(
+                            loan.id,
+                            loan.user_id
+                          )
+                        }
+                        className="bg-blue-600 hover:bg-blue-700 px-5 py-3 rounded-xl font-bold"
+                      >
+                        Save Payment
+                      </button>
+
+                    </div>
+
+                  </div>
+
+                )}
+
+              </div>
             )
           })}
 
