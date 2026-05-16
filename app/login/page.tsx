@@ -29,7 +29,7 @@ export default function LoginPage() {
 
     toast.success("Login successful!")
 
-    if (email === "admin@alalay.com") {
+    if (email === "adminalalay@gmail.com") {
 
         window.location.href = "/admin"
 
