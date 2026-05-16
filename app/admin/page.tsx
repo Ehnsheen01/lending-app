@@ -48,13 +48,13 @@ export default function AdminPage() {
   }
 
   const updateStatus = async (
-    id: string,
-    status: string
-  ) => {
+  loan: any,
+  status: string
+    ) => {
 
     const { error } = await supabase
-      .from("loans")
-      .update({
+        .from("loans")
+        .update({
         status,
 
         approved_at:
@@ -66,30 +66,74 @@ export default function AdminPage() {
             status === "Rejected"
             ? new Date()
             : null,
-        })          
-      .eq("id", id)
+        })
+        .eq("id", loan.id)
 
     if (error) {
-      toast.error(error.message)
-      return
+        toast.error(error.message)
+        return
     }
 
-    // Instant UI update
+    // CREATE WEEKLY SCHEDULES
+    if (status === "Approved") {
+
+        const interest =
+        Number(loan.amount) * 0.12
+
+        const totalCollectible =
+        Number(loan.amount) + interest
+
+        const weeklyDue =
+        totalCollectible / 4
+
+        const schedules = []
+
+        for (let week = 1; week <= 4; week++) {
+
+        const dueDate = new Date()
+
+        dueDate.setDate(
+            dueDate.getDate() + week * 7
+        )
+
+        schedules.push({
+
+            loan_id: loan.id,
+
+            week_number: week,
+
+            due_date: dueDate,
+
+            amount_due: weeklyDue,
+
+            lrf_due: 50,
+
+            status: "Pending",
+
+        })
+        }
+
+        await supabase
+        .from("loan_schedules")
+        .insert(schedules)
+    }
+
+    // instant UI update
     setLoans((prevLoans) =>
-      prevLoans.map((loan) =>
-        loan.id === id
-          ? { ...loan, status }
-          : loan
-      )
+        prevLoans.map((item) =>
+        item.id === loan.id
+            ? { ...item, status }
+            : item
+        )
     )
 
     toast.success(`Loan ${status}`)
-  }
+    }
 
   const recordPayment = async (
     loanId: string,
     userId: string
-  ) => {
+    ) => {
 
     const amount =
       paymentAmounts[loanId]
@@ -417,7 +461,7 @@ export default function AdminPage() {
                     <button
                       onClick={() =>
                         updateStatus(
-                          loan.id,
+                          loan,
                           "Approved"
                         )
                       }
@@ -429,7 +473,7 @@ export default function AdminPage() {
                     <button
                       onClick={() =>
                         updateStatus(
-                          loan.id,
+                          loan,
                           "Rejected"
                         )
                       }
