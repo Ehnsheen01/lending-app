@@ -173,6 +173,37 @@ export default function AdminPage() {
 
     toast.success("Payment recorded")
 
+    const { data: schedules } =
+    await supabase
+        .from("loan_schedules")
+        .select("*")
+        .eq("loan_id", loanId)
+        .order("week_number", {
+        ascending: true
+        })
+
+    const nextPending =
+    schedules?.find(
+        (schedule) =>
+        schedule.status === "Pending"
+    )
+
+    if (nextPending) {
+
+    await supabase
+        .from("loan_schedules")
+        .update({
+        status: "Paid",
+
+        amount_paid:
+            Number(amount),
+
+        paid_at:
+            new Date(),
+        })
+        .eq("id", nextPending.id)
+    }
+
     setPaymentAmounts((prev: any) => ({
       ...prev,
       [loanId]: ""
