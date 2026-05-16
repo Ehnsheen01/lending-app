@@ -114,123 +114,98 @@ export default function AdminPage() {
               totalCollectible / 4
 
             return (
-
-              <div
+                <div
                 key={loan.id}
                 className="bg-white/10 rounded-3xl p-6 border border-white/10"
-              >
+                >
 
-                {/* Loan Info */}
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid md:grid-cols-2 gap-6">
 
-                  <div>
+                    <div>
 
                     <p className="text-gray-400">
-                      Loan Amount
+                        Loan Amount
                     </p>
 
-                    <h2 className="text-3xl font-bold mt-1">
-                      ₱{Number(loan.amount).toFixed(2)}
+                    <h2 className="text-3xl font-bold mt-2">
+                        ₱{Number(loan.amount).toFixed(2)}
                     </h2>
 
-                  </div>
+                    <div className="mt-6">
 
-                  <div>
+                        <p className="text-gray-400">
+                        Purpose
+                        </p>
+
+                        <p className="mt-2">
+                        {loan.purpose}
+                        </p>
+
+                    </div>
+
+                    </div>
+
+                    <div>
 
                     <p className="text-gray-400">
-                      Status
+                        Status
                     </p>
 
-                    <h2
-                      className={`text-2xl font-bold mt-1 ${
-                        String(loan.status)
-                          .trim()
-                          .toLowerCase() === "approved"
-                          ? "text-emerald-400"
-                          : String(loan.status)
-                              .trim()
-                              .toLowerCase() === "rejected"
-                          ? "text-red-400"
-                          : "text-yellow-400"
-                      }`}
-                    >
-                      {loan.status}
+                    <h2 className="text-3xl font-bold mt-2">
+                        {loan.status}
                     </h2>
 
-                  </div>
+                    <div className="mt-6">
 
-                  <div>
+                        <p className="text-gray-400">
+                        Weekly Amortization
+                        </p>
 
-                    <p className="text-gray-400">
-                      Purpose
-                    </p>
+                        <p className="mt-2">
+                        ₱{weeklyAmortization.toFixed(2)}
+                        </p>
 
-                    <p className="mt-1">
-                      {loan.purpose}
-                    </p>
+                    </div>
 
-                  </div>
-
-                  <div>
-
-                    <p className="text-gray-400">
-                      Weekly Amortization
-                    </p>
-
-                    <p className="mt-1">
-                      ₱{weeklyAmortization.toFixed(2)}
-                    </p>
-
-                  </div>
+                    </div>
 
                 </div>
 
-                {/* Buttons */}
-                {String(loan.status)
-                  .trim()
-                  .toLowerCase() === "pending" ? (
+                {/* ACTIONS */}
+                {loan.status === "Pending" && (
 
-                  <div className="flex gap-4 mt-6">
+                    <div className="flex gap-4 mt-8">
 
                     <button
-                      onClick={() =>
+                        onClick={() =>
                         updateStatus(
-                          loan.id,
-                          "Approved"
+                            loan.id,
+                            "Approved"
                         )
-                      }
-                      className="bg-emerald-600 hover:bg-emerald-700 px-5 py-3 rounded-xl font-bold"
+                        }
+                        className="bg-emerald-600 hover:bg-emerald-700 px-5 py-3 rounded-xl font-bold"
                     >
-                      Approve
+                        Approve
                     </button>
 
                     <button
-                      onClick={() =>
+                        onClick={() =>
                         updateStatus(
-                          loan.id,
-                          "Rejected"
+                            loan.id,
+                            "Rejected"
                         )
-                      }
-                      className="bg-red-600 hover:bg-red-700 px-5 py-3 rounded-xl font-bold"
+                        }
+                        className="bg-red-600 hover:bg-red-700 px-5 py-3 rounded-xl font-bold"
                     >
-                      Reject
+                        Reject
                     </button>
 
-                  </div>
-
-                ) : (
-
-                  <div className="mt-6">
-
-                    <span className="bg-gray-700 text-white px-4 py-2 rounded-xl">
-                      Action Completed
-                    </span>
-
-                  </div>
+                    </div>
 
                 )}
 
-              </div>
+                </div>
+              
             )
           })}
 
