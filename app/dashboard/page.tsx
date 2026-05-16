@@ -102,11 +102,33 @@ export default function DashboardPage() {
                 Loan Status
               </p>
 
-              <h2 className="text-3xl font-bold mt-3">
+              <h2
+                className={`text-3xl font-bold mt-3 ${
+                  loan?.status === "Approved"
+                    ? "text-emerald-400"
+                    : loan?.status === "Rejected"
+                    ? "text-red-400"
+                    : "text-yellow-400"
+                }`}
+              >
                 {loan ? loan.status : "No Active Loan"}
               </h2>
 
-            </div>
+              {loan?.status === "Approved" && (
+
+                <div className="mt-6 bg-emerald-500/20 border border-emerald-400 rounded-2xl p-5">
+
+                  <h2 className="text-2xl font-bold text-emerald-300">
+                    Loan Approved ✅
+                  </h2>
+
+                  <p className="mt-2 text-emerald-100">
+                    Your loan has been approved. Please coordinate with A&L Alalay for release and collection schedule.
+                  </p>
+
+                </div>
+
+              )}
 
             <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/10">
 
