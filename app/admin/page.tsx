@@ -104,6 +104,10 @@ export default function AdminPage() {
         <div className="space-y-6">
 
           {loans.map((loan) => {
+           const normalizedStatus =
+            String(loan.status)
+                .trim()
+                .toLowerCase()
 
             const interest = Number(loan.amount) * 0.12
 
@@ -154,6 +158,10 @@ export default function AdminPage() {
                     <h2 className="text-3xl font-bold mt-2">
                         {loan.status}
                     </h2>
+                    
+                    <p className="text-red-400 text-sm mt-2">
+                        {JSON.stringify(loan.status)}
+                    </p>
 
                     <div className="mt-6">
 
@@ -172,7 +180,7 @@ export default function AdminPage() {
                 </div>
 
                 {/* ACTIONS */}
-                {loan.status === "Pending" && (
+                {normalizedStatus === "pending" && (
 
                     <div className="flex gap-4 mt-8">
 
