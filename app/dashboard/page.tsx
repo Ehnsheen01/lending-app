@@ -1,9 +1,43 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import toast from "react-hot-toast"
 
 export default function DashboardPage() {
+
+  const [loan, setLoan] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchLoan()
+  }, [])
+
+  const fetchLoan = async () => {
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      window.location.href = "/login"
+      return
+    }
+
+    const { data, error } = await supabase
+      .from("loans")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single()
+
+    if (!error && data) {
+      setLoan(data)
+    }
+
+    setLoading(false)
+  }
 
   const handleLogout = async () => {
 
@@ -13,6 +47,14 @@ export default function DashboardPage() {
 
     window.location.href = "/login"
   }
+
+  const interest = loan ? loan.amount * 0.12 : 0
+
+  const totalCollectible = loan
+    ? loan.amount + interest
+    : 0
+
+  const weeklyAmortization = totalCollectible / 4
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-emerald-950 to-black text-white p-6">
@@ -32,7 +74,6 @@ export default function DashboardPage() {
 
         </div>
 
-        {/* Logout Button */}
         <button
           onClick={handleLogout}
           className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-2xl font-bold shadow-lg"
@@ -42,78 +83,147 @@ export default function DashboardPage() {
 
       </div>
 
-      {/* Loan Cards */}
-      <div className="grid gap-5 md:grid-cols-3">
+      {/* Loading */}
+      {loading ? (
 
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/10">
-
-          <p className="text-gray-300">
-            Loan Status
-          </p>
-
-          <h2 className="text-3xl font-bold mt-3">
-            No Active Loan
-          </h2>
-
+        <div className="text-center text-xl">
+          Loading...
         </div>
 
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/10">
+      ) : (
 
-          <p className="text-gray-300">
-            Outstanding Balance
-          </p>
+        <>
+          {/* Loan Cards */}
+          <div className="grid gap-5 md:grid-cols-3">
 
-          <h2 className="text-3xl font-bold mt-3">
-            ₱0.00
-          </h2>
+            <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/10">
 
-        </div>
+              <p className="text-gray-300">
+                Loan Status
+              </p>
 
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/10">
+              <h2 className="text-3xl font-bold mt-3">
+                {loan ? loan.status : "No Active Loan"}
+              </h2>
 
-          <p className="text-gray-300">
-            Due Date
-          </p>
+            </div>
 
-          <h2 className="text-3xl font-bold mt-3">
-            -- / -- / ----
-          </h2>
+            <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/10">
 
-        </div>
+              <p className="text-gray-300">
+                Loan Amount
+              </p>
 
-      </div>
+              <h2 className="text-3xl font-bold mt-3">
+                ₱{loan ? Number(loan.amount).toFixed(2) : "0.00"}
+              </h2>
 
-      {/* Actions */}
-      <div className="mt-10 grid gap-5 md:grid-cols-2">
+            </div>
 
-        <a
-  href="/apply-loan"
-  className="bg-emerald-700 hover:bg-emerald-800 rounded-3xl p-8 text-left transition-all block"
->
+            <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/10">
 
-  <h2 className="text-2xl font-bold">
-    Apply for Loan
-  </h2>
+              <p className="text-gray-300">
+                Weekly Amortization
+              </p>
 
-  <p className="mt-2 text-emerald-200">
-    Submit a new loan application
-  </p>
+              <h2 className="text-3xl font-bold mt-3">
+                ₱{loan ? weeklyAmortization.toFixed(2) : "0.00"}
+              </h2>
 
-</a>
+            </div>
 
-        <button className="bg-white/10 hover:bg-white/20 rounded-3xl p-8 text-left transition-all border border-white/10">
+          </div>
 
-          <h2 className="text-2xl font-bold">
-            My Profile
-          </h2>
+          {/* Loan Summary */}
+          {loan && (
 
-          <p className="mt-2 text-gray-300">
-            View and update account information
-          </p>
+            <div className="mt-10 bg-white/10 rounded-3xl p-8 border border-white/10">
 
-        </button>
+              <h2 className="text-3xl font-bold mb-6">
+                Latest Loan Application
+              </h2>
 
-      </div>
+              <div className="grid gap-4 md:grid-cols-2">
+
+                <div>
+                  <p className="text-gray-400">
+                    Loan Purpose
+                  </p>
+
+                  <p className="text-xl mt-1">
+                    {loan.purpose}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-gray-400">
+                    Total Collectible
+                  </p>
+
+                  <p className="text-xl mt-1">
+                    ₱{totalCollectible.toFixed(2)}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-gray-400">
+                    Loan Term
+                  </p>
+
+                  <p className="text-xl mt-1">
+                    {loan.term_months} Month
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-gray-400">
+                    Status
+                  </p>
+
+                  <p className="text-xl mt-1">
+                    {loan.status}
+                  </p>
+                </div>
+
+              </div>
+
+            </div>
+
+          )}
+
+          {/* Actions */}
+          <div className="mt-10 grid gap-5 md:grid-cols-2">
+
+            <a
+              href="/apply-loan"
+              className="bg-emerald-700 hover:bg-emerald-800 rounded-3xl p-8 text-left transition-all block"
+            >
+
+              <h2 className="text-2xl font-bold">
+                Apply for Loan
+              </h2>
+
+              <p className="mt-2 text-emerald-200">
+                Submit a new loan application
+              </p>
+
+            </a>
+
+            <button className="bg-white/10 hover:bg-white/20 rounded-3xl p-8 text-left transition-all border border-white/10">
+
+              <h2 className="text-2xl font-bold">
+                My Profile
+              </h2>
+
+              <p className="mt-2 text-gray-300">
+                View and update account information
+              </p>
+
+            </button>
+
+          </div>
+        </>
+      )}
 
     </div>
   )
