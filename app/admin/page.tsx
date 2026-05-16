@@ -87,11 +87,12 @@ export default function AdminPage() {
 
     const { error } = await supabase
       .from("payments")
-      .insert({
-        loan_id: loanId,
-        user_id: userId,
-        amount: Number(amount),
-      })
+     .insert({
+    loan_id: loanId,
+    user_id: userId,
+    amount: Number(amount),
+    retention_fund: 50,
+    })
 
     if (error) {
       toast.error(error.message)

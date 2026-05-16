@@ -82,6 +82,13 @@ export default function DashboardPage() {
   const remainingBalance =
   totalCollectible - totalPaid
 
+  const totalRetentionFund =
+  payments.reduce(
+    (sum, payment) =>
+      sum + Number(payment.retention_fund || 0),
+    0
+  )
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-emerald-950 to-black text-white p-6">
 
@@ -277,7 +284,91 @@ export default function DashboardPage() {
                     ₱{remainingBalance.toFixed(2)}
                   </h2>
 
+                  <div>
+
+                  <p className="text-gray-400">
+                    Loan Retention Fund
+                  </p>
+
+                  <h2 className="text-3xl font-bold text-cyan-400 mt-2">
+                    ₱{totalRetentionFund.toFixed(2)}
+                  </h2>
+
                 </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          )}
+
+          {/* Payment History */}
+          {payments.length > 0 && (
+
+            <div className="mt-10 bg-white/10 rounded-3xl p-8 border border-white/10">
+
+              <h2 className="text-3xl font-bold mb-6">
+                Payment History
+              </h2>
+
+              <div className="overflow-x-auto">
+
+                <table className="w-full text-left">
+
+                  <thead>
+
+                    <tr className="border-b border-white/10 text-gray-400">
+
+                      <th className="py-3">
+                        Date Paid
+                      </th>
+
+                      <th className="py-3">
+                        Amortization
+                      </th>
+
+                      <th className="py-3">
+                        Retention Fund
+                      </th>
+
+                    </tr>
+
+                  </thead>
+
+                  <tbody>
+
+                    {payments.map((payment) => (
+
+                      <tr
+                        key={payment.id}
+                        className="border-b border-white/5"
+                      >
+
+                        <td className="py-4">
+                          {new Date(
+                            payment.payment_date
+                          ).toLocaleDateString()}
+                        </td>
+
+                        <td className="py-4 text-emerald-300">
+                          ₱{Number(payment.amount).toFixed(2)}
+                        </td>
+
+                        <td className="py-4 text-cyan-300">
+                          ₱{Number(
+                            payment.retention_fund || 0
+                          ).toFixed(2)}
+                        </td>
+
+                      </tr>
+
+                    ))}
+
+                  </tbody>
+
+                </table>
 
               </div>
 
