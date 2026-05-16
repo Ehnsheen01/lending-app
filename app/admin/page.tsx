@@ -12,6 +12,9 @@ export default function AdminPage() {
   const [paymentAmounts, setPaymentAmounts] =
     useState<any>({})
 
+  const [retentionAmounts, setRetentionAmounts] =
+    useState<any>({})
+
   useEffect(() => {
     fetchLoans()
   }, [])
@@ -80,6 +83,9 @@ export default function AdminPage() {
     const amount =
       paymentAmounts[loanId]
 
+    const retentionFund =
+    retentionAmounts[loanId] || 0
+
     if (!amount) {
       toast.error("Enter payment amount")
       return
@@ -91,7 +97,7 @@ export default function AdminPage() {
     loan_id: loanId,
     user_id: userId,
     amount: Number(amount),
-    retention_fund: 50,
+    rretention_fund: Number(retentionFund),
     })
 
     if (error) {
@@ -359,6 +365,19 @@ export default function AdminPage() {
                         }
                         className="bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-white"
                       />
+
+                      <input
+                        type="number"
+                        placeholder="LRF Amount"
+                        value={retentionAmounts[loan.id] || ""}
+                        onChange={(e) =>
+                            setRetentionAmounts((prev: any) => ({
+                            ...prev,
+                            [loan.id]: e.target.value
+                            }))
+                        }
+                        className="bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-white"
+                        />  
 
                       <button
                         onClick={() =>
