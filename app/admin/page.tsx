@@ -222,6 +222,11 @@ export default function AdminPage() {
             const weeklyAmortization =
               totalCollectible / 4
 
+            const minimumLRF = 50
+
+            const totalWeeklyDue =
+            weeklyAmortization + minimumLRF
+
             return (
 
               <div
@@ -270,7 +275,7 @@ export default function AdminPage() {
 
                   </div>
 
-                  <div>
+                <div>
 
                     <p className="text-gray-400">
                       Status
@@ -289,13 +294,37 @@ export default function AdminPage() {
 
                     <div className="mt-6">
 
-                      <p className="text-gray-400">
-                        Weekly Amortization
-                      </p>
+                        <p className="text-gray-400">
+                            Weekly Amortization
+                        </p>
 
-                      <p className="mt-2">
-                        ₱{weeklyAmortization.toFixed(2)}
-                      </p>
+                        <p className="mt-2">
+                            ₱{weeklyAmortization.toFixed(2)}
+                        </p>
+
+                    </div>
+
+                    <div className="mt-6">
+
+                        <p className="text-gray-400">
+                            Minimum LRF
+                        </p>
+
+                        <h2 className="text-2xl font-bold text-cyan-400 mt-2">
+                            ₱{minimumLRF.toFixed(2)}
+                        </h2>
+
+                        </div>
+
+                        <div className="mt-6">
+
+                        <p className="text-gray-400">
+                            Total Weekly Due
+                        </p>
+
+                        <h2 className="text-3xl font-bold text-emerald-300 mt-2">
+                            ₱{totalWeeklyDue.toFixed(2)}
+                        </h2>
 
                     </div>
 
@@ -504,27 +533,42 @@ export default function AdminPage() {
 
                             <div>
 
-                            <p className="text-gray-400 text-sm">
-                                Amortization
-                            </p>
+                                <p className="text-gray-400 text-sm">
+                                    Amortization
+                                </p>
 
-                            <p className="text-emerald-300">
-                                ₱{Number(payment.amount).toFixed(2)}
-                            </p>
+                                <p className="text-emerald-300">
+                                    ₱{Number(payment.amount).toFixed(2)}
+                                </p>
+
+                                </div>
+
+                            <div>
+
+                                <p className="text-gray-400 text-sm">
+                                    LRF
+                                </p>
+
+                                <p className="text-cyan-300">
+                                    ₱{Number(
+                                    payment.retention_fund || 0
+                                    ).toFixed(2)}
+                                </p>
 
                             </div>
 
                             <div>
 
-                            <p className="text-gray-400 text-sm">
-                                LRF
-                            </p>
+                                <p className="text-gray-400 text-sm">
+                                    Total Paid
+                                </p>
 
-                            <p className="text-cyan-300">
-                                ₱{Number(
-                                payment.retention_fund || 0
-                                ).toFixed(2)}
-                            </p>
+                                <p className="text-yellow-300">
+                                    ₱{(
+                                    Number(payment.amount) +
+                                    Number(payment.retention_fund || 0)
+                                    ).toFixed(2)}
+                                </p>
 
                             </div>
 
