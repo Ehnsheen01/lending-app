@@ -97,7 +97,7 @@ export default function AdminPage() {
     loan_id: loanId,
     user_id: userId,
     amount: Number(amount),
-    rretention_fund: Number(retentionFund),
+    retention_fund: Number(retentionFund),
     })
 
     if (error) {
