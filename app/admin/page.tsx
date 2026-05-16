@@ -40,7 +40,19 @@ export default function AdminPage() {
 
     const { error } = await supabase
       .from("loans")
-      .update({ status })
+      .update({
+        status,
+
+        approved_at:
+            status === "Approved"
+            ? new Date()
+            : null,
+
+        rejected_at:
+            status === "Rejected"
+            ? new Date()
+            : null,
+        })          
       .eq("id", id)
 
     if (error) {
@@ -181,7 +193,7 @@ export default function AdminPage() {
                     </p>
 
                     </div>
-                    
+
                     <p className="text-gray-400">
                       Loan Amount
                     </p>
@@ -234,6 +246,59 @@ export default function AdminPage() {
                     </div>
 
                   </div>
+
+                </div>
+                <div className="mt-6 grid md:grid-cols-2 gap-4">
+
+                <div>
+
+                    <p className="text-gray-400">
+                    Date Applied
+                    </p>
+
+                    <p className="mt-1">
+                    {new Date(
+                        loan.created_at
+                    ).toLocaleString()}
+                    </p>
+
+                </div>
+
+                {loan.approved_at && (
+
+                    <div>
+
+                    <p className="text-gray-400">
+                        Date Approved
+                    </p>
+
+                    <p className="mt-1 text-emerald-300">
+                        {new Date(
+                        loan.approved_at
+                        ).toLocaleString()}
+                    </p>
+
+                    </div>
+
+                )}
+
+                {loan.rejected_at && (
+
+                    <div>
+
+                    <p className="text-gray-400">
+                        Date Rejected
+                    </p>
+
+                    <p className="mt-1 text-red-300">
+                        {new Date(
+                        loan.rejected_at
+                        ).toLocaleString()}
+                    </p>
+
+                    </div>
+
+                )}
 
                 </div>
 
