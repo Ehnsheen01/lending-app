@@ -47,19 +47,40 @@ export default function AdminPage() {
     fetchLoans()
   }
 
+  const handleLogout = async () => {
+
+    await supabase.auth.signOut()
+
+    toast.success("Logged out successfully!")
+
+    window.location.href = "/login"
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-emerald-950 to-black text-white p-6">
 
       {/* Header */}
-      <div className="mb-10">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-10">
 
-        <h1 className="text-5xl font-bold">
-          Admin Panel
-        </h1>
+        <div>
 
-        <p className="text-emerald-400 mt-2">
-          Loan Management System
-        </p>
+          <h1 className="text-5xl font-bold">
+            Admin Panel
+          </h1>
+
+          <p className="text-emerald-400 mt-2">
+            Loan Management System
+          </p>
+
+        </div>
+
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-2xl font-bold shadow-lg"
+        >
+          Logout
+        </button>
 
       </div>
 
