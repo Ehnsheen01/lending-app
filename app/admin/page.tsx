@@ -42,16 +42,15 @@ export default function AdminPage() {
         return
     }
 
-    toast.success(`Loan ${status}`)
-
-    // INSTANT UI UPDATE
-    setLoans((prevLoans) =>
-        prevLoans.map((loan) =>
+    setLoans((prev) =>
+        prev.map((loan) =>
         loan.id === id
             ? { ...loan, status }
             : loan
         )
     )
+
+    toast.success(`Loan ${status}`)
     }
 
   const handleLogout = async () => {
@@ -157,7 +156,8 @@ export default function AdminPage() {
                   </div>
 
                   {/* Buttons */}
-                    {loan.status?.toLowerCase().includes("pending") ? (
+                    {String(loan.status).trim().toLowerCase() !== "approved" &&
+                    String(loan.status).trim().toLowerCase() !== "rejected" ? (
 
                     <div className="flex gap-4 mt-6">
 
