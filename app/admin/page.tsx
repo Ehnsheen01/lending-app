@@ -157,7 +157,7 @@ export default function AdminPage() {
                   </div>
 
                   {/* Buttons */}
-                    {loan.status === "Pending" ? (
+                    {loan.status?.toLowerCase().includes("pending") ? (
 
                     <div className="flex gap-4 mt-6">
 
