@@ -12,6 +12,9 @@ export default function AdminPage() {
   const [paymentAmounts, setPaymentAmounts] =
     useState<any>({})
 
+  const [payments, setPayments] =
+  useState<any[]>([])
+
   const [retentionAmounts, setRetentionAmounts] =
     useState<any>({})
 
@@ -33,6 +36,14 @@ export default function AdminPage() {
     }
 
     setLoans(data || [])
+
+    const { data: paymentData } =
+    await supabase
+        .from("payments")
+        .select("*")
+
+    setPayments(paymentData || [])
+
     setLoading(false)
   }
 
@@ -172,6 +183,22 @@ export default function AdminPage() {
             const totalCollectible =
               Number(loan.amount) + interest
 
+            const loanPayments =
+            payments.filter(
+                (payment) =>
+                payment.loan_id === loan.id
+            )
+
+            const totalPaid =
+            loanPayments.reduce(
+                (sum, payment) =>
+                sum + Number(payment.amount),
+                0
+            )
+
+            const remainingBalance =
+            totalCollectible - totalPaid
+
             const weeklyAmortization =
               totalCollectible / 4
 
@@ -249,6 +276,18 @@ export default function AdminPage() {
                       <p className="mt-2">
                         ₱{weeklyAmortization.toFixed(2)}
                       </p>
+
+                    </div>
+
+                    <div className="mt-6">
+
+                    <p className="text-gray-400">
+                        Remaining Balance
+                    </p>
+
+                    <h2 className="text-2xl font-bold text-yellow-400 mt-2">
+                        ₱{remainingBalance.toFixed(2)}
+                    </h2>
 
                     </div>
 
