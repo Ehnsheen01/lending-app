@@ -164,33 +164,37 @@ export default function AdminPage() {
                 </div>
 
                 {/* Buttons */}
-                <div className="flex gap-4 mt-6">
+               {loan.status === "Pending" && (
 
-                  <button
-                    onClick={() =>
-                      updateStatus(
-                        loan.id,
-                        "Approved"
-                      )
-                    }
-                    className="bg-emerald-600 hover:bg-emerald-700 px-5 py-3 rounded-xl font-bold"
-                  >
-                    Approve
-                  </button>
+                    <div className="flex gap-4 mt-6">
 
-                  <button
-                    onClick={() =>
-                      updateStatus(
-                        loan.id,
-                        "Rejected"
-                      )
-                    }
-                    className="bg-red-600 hover:bg-red-700 px-5 py-3 rounded-xl font-bold"
-                  >
-                    Reject
-                  </button>
+                        <button
+                        onClick={() =>
+                            updateStatus(
+                            loan.id,
+                            "Approved"
+                            )
+                        }
+                        className="bg-emerald-600 hover:bg-emerald-700 px-5 py-3 rounded-xl font-bold"
+                        >
+                        Approve
+                        </button>
 
-                </div>
+                        <button
+                        onClick={() =>
+                            updateStatus(
+                            loan.id,
+                            "Rejected"
+                            )
+                        }
+                        className="bg-red-600 hover:bg-red-700 px-5 py-3 rounded-xl font-bold"
+                        >
+                        Reject
+                        </button>
+
+                    </div>
+
+                    )}
 
               </div>
             )
