@@ -15,12 +15,16 @@ export default function AdminPage() {
   const [payments, setPayments] =
   useState<any[]>([])
 
+  const [schedules, setSchedules] =
+  useState<any[]>([])
+
   const [retentionAmounts, setRetentionAmounts] =
     useState<any>({})
 
   useEffect(() => {
     fetchLoans()
   }, [])
+
 
   const fetchLoans = async () => {
 
@@ -43,6 +47,13 @@ export default function AdminPage() {
         .select("*")
 
     setPayments(paymentData || [])
+
+    const { data: scheduleData } =
+    await supabase
+    .from("loan_schedules")
+    .select("*")
+
+    setSchedules(scheduleData || [])
 
     setLoading(false)
   }
@@ -231,6 +242,12 @@ export default function AdminPage() {
             payments.filter(
                 (payment) =>
                 payment.loan_id === loan.id
+            )
+
+            const loanSchedules =
+            schedules.filter(
+                (schedule) =>
+                schedule.loan_id === loan.id
             )
 
             const totalPaid =
@@ -621,6 +638,106 @@ export default function AdminPage() {
                         </div>
 
                     ))}
+
+                    </div>
+
+                </div>
+
+                )}
+
+                {/* Weekly Schedule */}
+                {loanSchedules.length > 0 && (
+
+                <div className="mt-10 border-t border-white/10 pt-6">
+
+                    <h2 className="text-2xl font-bold mb-4">
+                    Weekly Amortization Schedule
+                    </h2>
+
+                    <div className="overflow-x-auto">
+
+                    <table className="w-full text-left">
+
+                        <thead>
+
+                        <tr className="border-b border-white/10 text-gray-400">
+
+                            <th className="py-3">
+                            Week
+                            </th>
+
+                            <th className="py-3">
+                            Due Date
+                            </th>
+
+                            <th className="py-3">
+                            Weekly Due
+                            </th>
+
+                            <th className="py-3">
+                            LRF
+                            </th>
+
+                            <th className="py-3">
+                            Status
+                            </th>
+
+                        </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                        {loanSchedules.map((schedule) => (
+
+                            <tr
+                            key={schedule.id}
+                            className="border-b border-white/5"
+                            >
+
+                            <td className="py-4">
+                                Week {schedule.week_number}
+                            </td>
+
+                            <td className="py-4">
+                                {new Date(
+                                schedule.due_date
+                                ).toLocaleDateString()}
+                            </td>
+
+                            <td className="py-4 text-emerald-300">
+                                ₱{Number(
+                                schedule.amount_due
+                                ).toFixed(2)}
+                            </td>
+
+                            <td className="py-4 text-cyan-300">
+                                ₱{Number(
+                                schedule.lrf_due
+                                ).toFixed(2)}
+                            </td>
+
+                            <td className="py-4">
+
+                                <span className={
+                                schedule.status === "Paid"
+                                    ? "text-emerald-400"
+                                    : schedule.status === "Late"
+                                    ? "text-red-400"
+                                    : "text-yellow-400"
+                                }>
+                                {schedule.status}
+                                </span>
+
+                            </td>
+
+                            </tr>
+
+                        ))}
+
+                        </tbody>
+
+                    </table>
 
                     </div>
 
