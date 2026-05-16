@@ -166,7 +166,22 @@ export default function AdminPage() {
                 <div className="grid md:grid-cols-2 gap-6">
 
                   <div>
+                    <div className="mb-6">
 
+                    <p className="text-gray-400">
+                        Borrower
+                    </p>
+
+                    <h2 className="text-2xl font-bold mt-1">
+                        {loan.full_name || "Unknown Borrower"}
+                    </h2>
+
+                    <p className="text-emerald-300 mt-1">
+                        {loan.email}
+                    </p>
+
+                    </div>
+                    
                     <p className="text-gray-400">
                       Loan Amount
                     </p>

@@ -88,7 +88,8 @@ export default function ApplyLoanPage() {
         amount: loanAmount,
         purpose,
         term_months: 1,
-
+        full_name: user.user_metadata?.full_name || "Borrower",
+        email: user.email,
       })
 
     setLoading(false)
