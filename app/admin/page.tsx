@@ -28,24 +28,31 @@ export default function AdminPage() {
   }
 
   const updateStatus = async (
-    id: string,
-    status: string
-  ) => {
+  id: string,
+  status: string
+    ) => {
 
     const { error } = await supabase
-      .from("loans")
-      .update({ status })
-      .eq("id", id)
+        .from("loans")
+        .update({ status })
+        .eq("id", id)
 
     if (error) {
-      toast.error(error.message)
-      return
+        toast.error(error.message)
+        return
     }
 
     toast.success(`Loan ${status}`)
 
-    fetchLoans()
-  }
+    // INSTANT UI UPDATE
+    setLoans((prevLoans) =>
+        prevLoans.map((loan) =>
+        loan.id === id
+            ? { ...loan, status }
+            : loan
+        )
+    )
+    }
 
   const handleLogout = async () => {
 
