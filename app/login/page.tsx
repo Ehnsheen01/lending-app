@@ -29,7 +29,15 @@ export default function LoginPage() {
 
     toast.success("Login successful!")
 
-    window.location.href = "/dashboard"
+    if (email === "admin@alalay.com") {
+
+        window.location.href = "/admin"
+
+    } else {
+
+      window.location.href = "/dashboard"
+
+    }
   }
 
   return (
